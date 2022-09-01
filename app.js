@@ -14,8 +14,10 @@ function setupInput() {
 	window.addEventListener("touchstart", handleTouchStart, { once: true });
 }
 
-async function hadleInput(e) {
-	switch (e.key) {
+async function hadleInput(e, arrow) {
+	const key = arrow ? arrow : e.key;
+
+	switch (key) {
 		case "ArrowUp":
 			if (!canMoveUp()) {
 				setupInput();
@@ -150,7 +152,7 @@ function handleTouchStart(e) {
 	window.addEventListener("touchmove", handleTouchMove, { once: true });
 }
 
-async function handleTouchMove(e) {
+function handleTouchMove(e) {
 	if (!xDown || !yDown) return;
 
 	xUp = e.touches[0].clientX;
@@ -161,53 +163,22 @@ async function handleTouchMove(e) {
 	if (Math.abs(xDiff) > Math.abs(yDiff)) {
 		if (xDiff > 0) {
 			/* left swipe */
-			if (!canMoveLeft()) {
-				setupInput();
-				return;
-			}
-			await moveLeft();
+			hadleInput(e, "ArrowLeft");
 		} else {
 			/* right swipe */
-			if (!canMoveRight()) {
-				setupInput();
-				return;
-			}
-			await moveRight();
-		}
-	} else if (Math.abs(xDiff) < Math.abs(yDiff)) {
-		if (yDiff > 0) {
-			/* up swipe */
-			if (!canMoveUp()) {
-				setupInput();
-				return;
-			}
-			await moveUp();
-		} else {
-			/* down swipe */
-			if (!canMoveDown()) {
-				setupInput();
-				return;
-			}
-			await moveDown();
+			hadleInput(e, "ArrowRight");
 		}
 	} else {
-		setupInput();
-		return;
+		if (yDiff > 0) {
+			/* up swipe */
+			hadleInput(e, "ArrowUp");
+		} else {
+			/* down swipe */
+			hadleInput(e, "ArrowDown");
+		}
 	}
+
 	/* reset values */
 	xDown = null;
 	yDown = null;
-
-	// Other code I don't want to run if user didn't click any "arrow" key
-	grid.cells.forEach((cell) => cell.mergeTiles());
-
-	const newTile = new Tile(gameBoard);
-	grid.randomEmptyCell().tile = newTile;
-
-	if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
-		newTile.waitForTransition(true).then(() => alert("You lose"));
-		return;
-	}
-
-	setupInput();
 }
