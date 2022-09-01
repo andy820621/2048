@@ -9,11 +9,9 @@ grid.randomEmptyCell().tile = new Tile(gameBoard);
 grid.randomEmptyCell().tile = new Tile(gameBoard);
 
 setupInput();
-// console.log(grid.cellsByColumn.map((column) => column.reverse()));
-// console.log((grid.cellsByColumn));
-
 function setupInput() {
 	window.addEventListener("keydown", hadleInput, { once: true });
+	window.addEventListener("touchstart", handleTouchStart, { once: true });
 }
 
 async function hadleInput(e) {
@@ -131,4 +129,85 @@ function canMove(cells) {
 			return moveToCell.canAccept(cell.tile);
 		});
 	});
+}
+
+// Mobile Slide
+let xDown = null,
+	yDown = null,
+	xUp = null,
+	yUp = null,
+	xDiff = null,
+	yDiff = null;
+
+function getTouches(e) {
+	return e.touches;
+}
+
+function handleTouchStart(e) {
+	const firstTouch = getTouches(e)[0];
+	xDown = firstTouch.clientX;
+	yDown = firstTouch.clientY;
+	window.addEventListener("touchmove", handleTouchMove, { once: true });
+}
+
+async function handleTouchMove(e) {
+	if (!xDown || !yDown) return;
+
+	xUp = e.touches[0].clientX;
+	yUp = e.touches[0].clientY;
+	xDiff = xDown - xUp;
+	yDiff = yDown - yUp;
+
+	if (Math.abs(xDiff) > Math.abs(yDiff)) {
+		if (xDiff > 0) {
+			/* left swipe */
+			if (!canMoveLeft()) {
+				setupInput();
+				return;
+			}
+			await moveLeft();
+		} else {
+			/* right swipe */
+			if (!canMoveRight()) {
+				setupInput();
+				return;
+			}
+			await moveRight();
+		}
+	} else if (Math.abs(xDiff) < Math.abs(yDiff)) {
+		if (yDiff > 0) {
+			/* up swipe */
+			if (!canMoveUp()) {
+				setupInput();
+				return;
+			}
+			await moveUp();
+		} else {
+			/* down swipe */
+			if (!canMoveDown()) {
+				setupInput();
+				return;
+			}
+			await moveDown();
+		}
+	} else {
+		setupInput();
+		return;
+	}
+	/* reset values */
+	xDown = null;
+	yDown = null;
+
+	// Other code I don't want to run if user didn't click any "arrow" key
+	grid.cells.forEach((cell) => cell.mergeTiles());
+
+	const newTile = new Tile(gameBoard);
+	grid.randomEmptyCell().tile = newTile;
+
+	if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
+		newTile.waitForTransition(true).then(() => alert("You lose"));
+		return;
+	}
+
+	setupInput();
 }
