@@ -6,9 +6,9 @@ export default class Grid {
 	#cells;
 
 	constructor(gridElemint) {
-		gridElemint.style.setProperty("--grid-number", GRID_NUMBER);
-		gridElemint.style.setProperty("--grid-gap", `${GRID_GAP}vmin`);
-		gridElemint.style.setProperty("--cell-size", `${CELL_SIZE}vmin`);
+		document.body.style.setProperty("--grid-number", GRID_NUMBER);
+		document.body.style.setProperty("--grid-gap", `${GRID_GAP}vmin`);
+		document.body.style.setProperty("--cell-size", `${CELL_SIZE}vmin`);
 		this.#cells = createCellElements(gridElemint).map((cellElement, index) => {
 			return new Cell(
 				cellElement,
