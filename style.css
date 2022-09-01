@@ -2,16 +2,20 @@
 *::before,
 *::after {
 	box-sizing: border-box;
-	font-family: Arial, Helvetica, sans-serif;
 }
 
+html,
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	height: 100vh;
+}
 body {
 	background-color: #f9f8ee;
 	display: grid;
 	place-items: center;
-	height: 100vh;
 	margin: 0;
 	font-size: 7.5vmin;
+	overflow: hidden;
 }
 #game-board {
 	display: grid;
