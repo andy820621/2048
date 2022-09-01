@@ -2,16 +2,33 @@ import Grid from "./Grid.js";
 import Tile from "./Tile.js";
 
 const gameBoard = document.querySelector("#game-board");
+const score = document.querySelector(".score");
+const bestScore = document.querySelector(".bestScore");
+let localBestScore = localStorage.getItem("localBestScore");
+localBestScore =
+	localStorage == null ? 0 : (localBestScore = JSON.parse(localBestScore));
 
-const grid = new Grid(gameBoard);
+let scoreValue,
+	bestScoreValue = localBestScore;
+let grid = null;
 
-grid.randomEmptyCell().tile = new Tile(gameBoard);
-grid.randomEmptyCell().tile = new Tile(gameBoard);
+init();
+function init() {
+	scoreValue = 0;
+	score.textContent = 0;
+	bestScore.textContent = bestScoreValue;
 
-setupInput();
+	gameBoard.innerHTML = "";
+	grid = new Grid(gameBoard);
+	grid.randomEmptyCell().tile = new Tile(gameBoard);
+	grid.randomEmptyCell().tile = new Tile(gameBoard);
+
+	setupInput();
+}
+
 function setupInput() {
 	window.addEventListener("keydown", hadleInput, { once: true });
-	window.addEventListener("touchstart", handleTouchStart, { once: true });
+	gameBoard.addEventListener("touchstart", handleTouchStart, { once: true });
 }
 
 async function hadleInput(e, arrow) {
@@ -58,7 +75,11 @@ async function hadleInput(e, arrow) {
 	grid.randomEmptyCell().tile = newTile;
 
 	if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
-		newTile.waitForTransition(true).then(() => alert("You lose"));
+		newTile.waitForTransition(true).then(() => {
+			alert("You lose");
+			saveBestScore();
+			init();
+		});
 		return;
 	}
 
@@ -98,6 +119,7 @@ function slideTiles(cells) {
 					promises.push(cell.tile.waitForTransition());
 					if (lastValidCell.tile != null) {
 						lastValidCell.mergeTile = cell.tile;
+						addScore(cell.tile.value * 2);
 					} else {
 						lastValidCell.tile = cell.tile;
 					}
@@ -146,6 +168,8 @@ function getTouches(e) {
 }
 
 function handleTouchStart(e) {
+	e.preventDefault();
+
 	const firstTouch = getTouches(e)[0];
 	xDown = firstTouch.clientX;
 	yDown = firstTouch.clientY;
@@ -153,6 +177,8 @@ function handleTouchStart(e) {
 }
 
 function handleTouchMove(e) {
+	e.preventDefault();
+
 	if (!xDown || !yDown) return;
 
 	xUp = e.touches[0].clientX;
@@ -181,4 +207,19 @@ function handleTouchMove(e) {
 	/* reset values */
 	xDown = null;
 	yDown = null;
+}
+
+// Score
+function addScore(value) {
+	score.textContent = parseInt(score.textContent) + value;
+}
+function saveBestScore() {
+	if (bestScoreValue >= parseInt(score.textContent)) return;
+	bestScoreValue = parseInt(score.textContent);
+
+	// updat value
+	localBestScore = bestScoreValue;
+
+	// save to localStorage
+	localStorage.setItem("localBestScore", JSON.stringify(localBestScore));
 }
