@@ -41,6 +41,9 @@ body {
 	border-radius: 1vmin;
 	padding: var(--grid-gap);
 	position: relative;
+
+	transform: translateZ(0);
+	-webkit-transform: translateZ(0);
 }
 .cell {
 	background-color: var(--beige);
@@ -61,8 +64,11 @@ body {
 	left: calc(var(--grid-gap) + var(--x) * (var(--grid-gap) + var(--cell-size)));
 	top: calc(var(--grid-gap) + var(--y) * (var(--grid-gap) + var(--cell-size)));
 	font-weight: bold;
-	animation: show 0.2s ease-in-out;
-	transition: 0.1s ease-in-out;
+	animation: show 0.2s linear;
+	transition: 0.1s linear;
+
+	transform: translateZ(0);
+	-webkit-transform: translateZ(0);
 }
 
 @keyframes show {
