@@ -177,7 +177,7 @@ function handleTouchStart(e) {
 }
 
 function handleTouchMove(e) {
-	e.preventDefault();
+	e.stopPropagation();
 
 	if (!xDown || !yDown) return;
 
