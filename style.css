@@ -48,6 +48,9 @@ body {
 .cell {
 	background-color: var(--beige);
 	border-radius: 1vmin;
+
+	transform: translateZ(0);
+	-webkit-transform: translateZ(0);
 }
 
 .tile {
