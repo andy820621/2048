@@ -11,7 +11,7 @@ Use Vanilla Javascript to build this little Game, and use Vite as build tool.
 
 ##### Go to [Website](https://2048-andy820621.vercel.app/) to enjoy this little game.
 
-<img src="./mobile.webp" width="600">
+<img src="./mobile.webp">
 
 ## Project Setup
 
