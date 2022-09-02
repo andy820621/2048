@@ -5,8 +5,9 @@ const gameBoard = document.querySelector("#game-board");
 const score = document.querySelector(".score");
 const bestScore = document.querySelector(".bestScore");
 let localBestScore = localStorage.getItem("localBestScore");
-localBestScore =
-	localStorage == null ? 0 : (localBestScore = JSON.parse(localBestScore));
+localBestScore = localStorage
+	? 0
+	: (localBestScore = JSON.parse(localBestScore));
 
 let scoreValue,
 	bestScoreValue = localBestScore;
@@ -85,6 +86,20 @@ async function hadleInput(e, arrow) {
 
 	setupInput();
 }
+
+// 	newTile
+// 		.waitForTransition(true)
+// 		.then((resolve) => {
+// 			if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
+// 				alert("You lose");
+// 				saveBestScore();
+// 				init();
+// 				return;
+// 			} else {
+// 				resolve();
+// 			}
+// 		})
+// 		.then(() => setupInput());
 
 function moveUp() {
 	return slideTiles(grid.cellsByColumn);
